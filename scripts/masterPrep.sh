@@ -2,22 +2,35 @@
 
 echo $(date) " - Starting Script"
 
-STORAGEACCOUNT=$1
-SUDOUSER=$2
-LOCATION=$3
+# install updates
+yum update -y
 
-# Install EPEL repository
-echo $(date) " - Installing EPEL"
+# install the following base packages
+yum install -y  wget git zile nano net-tools docker-1.13.1\
+				bind-utils iptables-services \
+				bridge-utils bash-completion \
+				kexec-tools sos psacct openssl-devel \
+				httpd-tools NetworkManager \
+				python-cryptography python2-pip python-devel  python-passlib \
+				java-1.8.0-openjdk-headless
 
-yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#install epel
+yum -y install epel-release
+
+# Disable the EPEL repository globally so that is not accidentally used during later steps of the installation
 sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
 
-echo $(date) " - EPEL successfully installed"
+systemctl | grep "NetworkManager.*running"
+if [ $? -eq 1 ]; then
+	systemctl start NetworkManager
+	systemctl enable NetworkManager
+fi
 
-# Update system to latest packages and install dependencies
-echo $(date) " - Update system to latest packages and install dependencies"
+# install the packages for Ansible
+yum -y --enablerepo=epel install pyOpenSSL
 
-yum -y install wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct httpd-tools
+curl -o ansible.rpm https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.5-1.el7.ans.noarch.rpm
+yum -y --enablerepo=epel install ansible.rpm
 yum -y install cloud-utils-growpart.noarch
 yum -y update --exclude=WALinuxAgent
 systemctl restart dbus
@@ -27,19 +40,11 @@ echo $(date) " - System updates successfully installed"
 # Only install Ansible and pyOpenSSL on Master-0 Node
 # python-passlib needed for metrics
 
-if hostname -f|grep -- "-0" >/dev/null
-then
-    echo $(date) " - Installing Ansible, pyOpenSSL and python-passlib"
-    yum -y --enablerepo=epel install pyOpenSSL python-passlib
-	yum -y install https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.2-1.el7.ans.noarch.rpm
-fi
 
-# Install java to support metrics
-echo $(date) " - Installing Java"
+echo $(date) " - Installing Ansible, pyOpenSSL and python-passlib"
+yum -y --enablerepo=epel install pyOpenSSL python-passlib
 
-yum -y install java-1.8.0-openjdk-headless
 
-echo $(date) " - Java installed successfully"
 
 # Grow Root File System
 echo $(date) " - Grow Root FS"
@@ -61,13 +66,6 @@ else
 	exit 20
 fi
 
-# Install Docker 1.13.x
-echo $(date) " - Installing Docker 1.13.x"
-
-yum -y install docker
-sed -i -e "s#^OPTIONS='--selinux-enabled'#OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'#" /etc/sysconfig/docker
-
-echo $(date) " - Docker installed successfully"
 
 # Create thin pool logical volume for Docker
 echo $(date) " - Creating thin pool logical volume for Docker and staring service"
@@ -89,38 +87,5 @@ fi
 
 systemctl enable docker
 systemctl start docker
-
-# Create Storage Class yml files on MASTER-0
-
-if hostname -f|grep -- "-0" >/dev/null
-then
-cat <<EOF > /home/${SUDOUSER}/scunmanaged.yml
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: generic
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: kubernetes.io/azure-disk
-parameters:
-  location: ${LOCATION}
-  storageAccount: ${STORAGEACCOUNT}
-EOF
-
-cat <<EOF > /home/${SUDOUSER}/scmanaged.yml
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: generic
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: kubernetes.io/azure-disk
-parameters:
-  kind: managed
-  location: ${LOCATION}
-  storageaccounttype: Premium_LRS
-EOF
-
-fi
 
 echo $(date) " - Script Complete"

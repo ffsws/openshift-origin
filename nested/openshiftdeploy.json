@@ -154,10 +154,10 @@
 				"description": "Subdomain chosen for application routing"
 			}
 		},
-		"redHatTags": {
+		"okdTags": {
 			"type": "object",
 			"metadata": {
-				"description": "Red Hat Tags"
+				"description": "OKD Tags"
 			}
 		},
 		"sshPrivateKey": {
@@ -182,10 +182,10 @@
 		"apiVersion": "[parameters('apiVersionCompute')]",
 		"tags": {
 			"displayName": "DeployOpenShift",
-			"provider": "[parameters('redHatTags').provider]",
-			"app": "[parameters('redHatTags').app]",
-			"version": "[parameters('redHatTags').version]",
-			"platform": "[parameters('redHatTags').platform]"
+			"provider": "[parameters('okdTags').provider]",
+			"app": "[parameters('okdTags').app]",
+			"version": "[parameters('okdTags').version]",
+			"platform": "[parameters('okdTags').platform]"
 		},
 		"properties": {
 			"publisher": "Microsoft.Azure.Extensions",

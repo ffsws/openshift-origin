@@ -15,6 +15,13 @@ echo $(date) " - Update system to latest packages and install dependencies"
 
 yum -y install wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct
 yum -y install cloud-utils-growpart.noarch
+yum install -y  wget git zile nano net-tools docker-1.13.1\
+				bind-utils iptables-services \
+				bridge-utils bash-completion \
+				kexec-tools sos psacct openssl-devel \
+				httpd-tools NetworkManager \
+				python-cryptography python2-pip python-devel  python-passlib \
+				java-1.8.0-openjdk-headless
 yum -y update --exclude=WALinuxAgent
 systemctl restart dbus
 
@@ -40,13 +47,6 @@ else
 	exit 20
 fi
 
-# Install Docker 1.13.x
-echo $(date) " - Installing Docker 1.13.x"
-
-yum -y install docker
-sed -i -e "s#^OPTIONS='--selinux-enabled'#OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'#" /etc/sysconfig/docker
-
-echo $(date) " - Docker installed successfully"
 
 # Create thin pool logical volume for Docker
 echo $(date) " - Creating thin pool logical volume for Docker and staring service"
