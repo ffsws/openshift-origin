@@ -2,27 +2,37 @@
 
 echo $(date) " - Starting Script"
 
-# Install EPEL repository
-echo $(date) " - Installing EPEL"
+# install updates
+yum update -y --exclude=WALinuxAgent
 
-yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
-
-echo $(date) " - EPEL successfully installed"
-
-# Update system to latest packages and install dependencies
-echo $(date) " - Update system to latest packages and install dependencies"
-
-yum -y install wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct
-yum -y install cloud-utils-growpart.noarch
+# install the following base packages
 yum install -y  wget git zile nano net-tools docker-1.13.1\
 				bind-utils iptables-services \
 				bridge-utils bash-completion \
 				kexec-tools sos psacct openssl-devel \
 				httpd-tools NetworkManager \
 				python-cryptography python2-pip python-devel  python-passlib \
-				java-1.8.0-openjdk-headless
-yum -y update --exclude=WALinuxAgent
+				java-1.8.0-openjdk-headless "@Development Tools"
+
+#install epel
+yum -y install epel-release
+
+# Disable the EPEL repository globally so that is not accidentally used during later steps of the installation
+sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
+
+systemctl | grep "NetworkManager.*running"
+if [ $? -eq 1 ]; then
+	systemctl start NetworkManager
+	systemctl enable NetworkManager
+fi
+
+# install the packages for Ansible
+yum -y --enablerepo=epel install pyOpenSSL
+
+curl -o ansible.rpm https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.5-1.el7.ans.noarch.rpm
+yum -y --enablerepo=epel install ansible.rpm
+yum -y --enablerepo=epel install htop
+yum -y install openshift-ansible
 systemctl restart dbus
 
 echo $(date) " - System updates successfully installed"

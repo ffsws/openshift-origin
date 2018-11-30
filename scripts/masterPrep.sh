@@ -3,7 +3,7 @@
 echo $(date) " - Starting Script"
 
 # install updates
-yum -y update --exclude=WALinuxAgent
+yum update -y --exclude=WALinuxAgent
 
 # install the following base packages
 yum install -y  wget git zile nano net-tools docker-1.13.1\
@@ -12,7 +12,7 @@ yum install -y  wget git zile nano net-tools docker-1.13.1\
 				kexec-tools sos psacct openssl-devel \
 				httpd-tools NetworkManager \
 				python-cryptography python2-pip python-devel  python-passlib \
-				java-1.8.0-openjdk-headless
+				java-1.8.0-openjdk-headless "@Development Tools"
 
 #install epel
 yum -y install epel-release
@@ -31,17 +31,16 @@ yum -y --enablerepo=epel install pyOpenSSL
 
 curl -o ansible.rpm https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.5-1.el7.ans.noarch.rpm
 yum -y --enablerepo=epel install ansible.rpm
-yum -y install cloud-utils-growpart.noarch
-yum -y update --exclude=WALinuxAgent
+yum -y --enablerepo=epel install htop
+yum -y install openshift-ansible
 systemctl restart dbus
 
 echo $(date) " - System updates successfully installed"
 
-
-echo $(date) " - Installing Ansible, pyOpenSSL and python-passlib"
-yum -y --enablerepo=epel install pyOpenSSL python-passlib
-
-
+#sed -i -e "s/^# control_path = %(directory)s\/%%h-%%r/control_path = %(directory)s\/%%h-%%r/" /etc/ansible/ansible.cfg
+sed -i -e "s/^#host_key_checking = False/host_key_checking = False/" /etc/ansible/ansible.cfg
+#sed -i -e "s/^#pty=False/pty=False/" /etc/ansible/ansible.cfg
+#sed -i -e "s/^#stdout_callback = skippy/stdout_callback = skippy/" /etc/ansible/ansible.cfg
 
 # Grow Root File System
 echo $(date) " - Grow Root FS"
