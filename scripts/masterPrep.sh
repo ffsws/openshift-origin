@@ -3,7 +3,7 @@
 echo $(date) " - Starting Script"
 
 # install updates
-yum update -y
+yum -y update --exclude=WALinuxAgent
 
 # install the following base packages
 yum install -y  wget git zile nano net-tools docker-1.13.1\
@@ -36,9 +36,6 @@ yum -y update --exclude=WALinuxAgent
 systemctl restart dbus
 
 echo $(date) " - System updates successfully installed"
-
-# Only install Ansible and pyOpenSSL on Master-0 Node
-# python-passlib needed for metrics
 
 
 echo $(date) " - Installing Ansible, pyOpenSSL and python-passlib"
