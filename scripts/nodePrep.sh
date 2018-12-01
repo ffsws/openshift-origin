@@ -33,6 +33,7 @@ curl -o ansible.rpm https://releases.ansible.com/ansible/rpm/release/epel-7-x86_
 yum -y --enablerepo=epel install ansible.rpm
 yum -y --enablerepo=epel install htop
 yum -y install openshift-ansible
+yum -y install centos-release-openshift-origin311
 systemctl restart dbus
 
 echo $(date) " - System updates successfully installed"
