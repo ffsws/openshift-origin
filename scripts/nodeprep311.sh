@@ -73,5 +73,6 @@ fi
 systemctl enable docker
 systemctl start docker
 
+echo "reboot" | at now + 1 minute
 echo $(date) " - Script Complete"
 
