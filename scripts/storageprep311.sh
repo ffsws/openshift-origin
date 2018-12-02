@@ -47,26 +47,26 @@ echo "
 OPTIONS=\"\$OPTIONS --insecure-registry 172.30.0.0/16\"
 " >> /etc/sysconfig/docker
 
-## Create thin pool logical volume for Docker
-#echo $(date) " - Creating thin pool logical volume for Docker and staring service"
-#
-#DOCKERVG=$( parted -m /dev/sda print all 2>/dev/null | grep unknown | grep /dev/sd | cut -d':' -f1 | head -n1 )
-#
-#echo "
-## Adding OpenShift data disk for docker
-#DEVS=${DOCKERVG}
-#VG=docker-vg
-#" >> /etc/sysconfig/docker-storage-setup
-#
-## Running setup for docker storage
-#docker-storage-setup
-#if [ $? -eq 0 ]
-#then
-#    echo "Docker thin pool logical volume created successfully"
-#else
-#    echo "Error creating logical volume for Docker"
-#    exit 5
-#fi
+# Create thin pool logical volume for Docker
+echo $(date) " - Creating thin pool logical volume for Docker and staring service"
+
+DOCKERVG=$( parted -m /dev/sda print all 2>/dev/null | grep unknown | grep /dev/sd | cut -d':' -f1 | head -n1 )
+
+echo "
+# Adding OpenShift data disk for docker
+DEVS=${DOCKERVG}
+VG=docker-vg
+" >> /etc/sysconfig/docker-storage-setup
+
+# Running setup for docker storage
+docker-storage-setup
+if [ $? -eq 0 ]
+then
+    echo "Docker thin pool logical volume created successfully"
+else
+    echo "Error creating logical volume for Docker"
+    exit 5
+fi
 
 # Enable and start Docker services
 
