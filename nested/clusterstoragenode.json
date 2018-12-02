@@ -69,12 +69,6 @@
 				"description": "Unmanaged data disk uri"
 			}
 		},
-		"unmanagedGlusterDiskUri": {
-			"type": "string",
-			"metadata": {
-				"description": "Unmanaged data disk uri"
-			}
-		},
 		"role": {
 			"type": "string",
 			"metadata": {
@@ -103,12 +97,6 @@
 			"type": "string",
 			"metadata": {
 				"description": "Storage Account for data disk"
-			}
-		},
-		"newStorageAccountGluster": {
-			"type": "string",
-			"metadata": {
-				"description": "Storage Account for Gluster data disk"
 			}
 		},
 		"diagStorageAccount": {
