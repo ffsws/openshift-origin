@@ -151,16 +151,16 @@
 					"storageAccountType": "[parameters('vmStorageType')]"
 				},
 				"createOption": "Empty"
-			}],
-			"dataDisks": [{
-				"name": "[concat(parameters('hostName'), '-gluster')]",
-				"diskSizeGB": "[parameters('dataDiskSize')]",
-				"lun": 1,
-				"managedDisk": {
-					"storageAccountType": "[parameters('vmStorageType')]"
-				},
-				"createOption": "Empty"
-			}]
+			},
+				{
+					"name": "[concat(parameters('hostName'), '-gluster')]",
+					"diskSizeGB": "[parameters('dataDiskSize')]",
+					"lun": 1,
+					"managedDisk": {
+						"storageAccountType": "[parameters('vmStorageType')]"
+					},
+					"createOption": "Empty"
+				}]
 		},
 		"unmanagedStorageProfile": {
 			"imageReference": "[parameters('imageReference')]",
@@ -181,8 +181,8 @@
 					"uri": "[concat(parameters('unmanagedDataDiskUri'), 'vhds/', parameters('hostname'), '-docker-pool.vhd')]"
 				},
 				"createOption": "Empty"
-			}],
-			"dataDisks": [{
+			},
+				{
 				"name": "[concat(parameters('hostname'), '-gluster')]",
 				"diskSizeGB": "[parameters('dataDiskSize')]",
 				"lun": 1,
