@@ -69,6 +69,12 @@
 				"description": "Unmanaged data disk uri"
 			}
 		},
+		"unmanagedGlusterDiskUri": {
+			"type": "string",
+			"metadata": {
+				"description": "Unmanaged data disk uri"
+			}
+		},
 		"role": {
 			"type": "string",
 			"metadata": {
