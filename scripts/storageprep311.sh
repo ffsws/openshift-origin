@@ -20,7 +20,7 @@ yum -y install cloud-utils-growpart.noarch
 curl -o ansible.rpm https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.5-1.el7.ans.noarch.rpm
 yum -y --enablerepo=epel install ansible.rpm
 yum -y --enablerepo=epel install htop
-#yum -y install ansible
+yum -y install centos-release-gluster
 yum -y update glusterfs-fuse
 yum -y update --exclude=WALinuxAgent
 echo $(date) " - Base package insallation and updates complete"
